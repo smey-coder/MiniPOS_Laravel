@@ -1,0 +1,88 @@
+body {
+    font-family: 'Noto Sans Khmer', sans-serif;
+}
+/* ================= SIDEBAR ================= */
+.sidebar p {
+    font-size: .75rem;
+    color: #adb5bd;
+    margin-left: 10px;
+}
+
+.nav-link {
+    transition: all .25s ease;
+}
+
+.nav-link:hover {
+    background-color: #0d6efd;
+    border-radius: 6px;
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    background: linear-gradient(90deg,#0d6efd,#084298);
+    border-radius: 6px;
+}
+
+/* ================= PAGE ANIMATION ================= */
+.page-transition {
+    animation: fadeUp .4s ease;
+}
+.fade-out {
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================= DARK MODE ================= */
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode .bg-white {
+    background-color: #1f1f1f !important;
+}
+
+.dark-mode .card,
+.dark-mode .dropdown-menu {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+.sidebar {
+    font-family: 'Noto Sans Khmer', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.sidebar img {
+    background: none; /* logo transparent */
+    transition: transform 0.3s ease;
+}
+
+.sidebar img:hover {
+    transform: scale(1.05);
+}
+
+.nav-link {
+    color: #ffffff;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+.nav-link.active-link {
+    background-color: #28a745; /* green highlight for active */
+    font-weight: 600;
+    transform: translateX(3px);
+}
+
+.section-title {
+    letter-spacing: 1px;
+}
