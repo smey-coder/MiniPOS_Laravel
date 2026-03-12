@@ -18,10 +18,12 @@ return new class extends Migration
             $table->foreignId('product_type_id')->constrained('product_type', 'id')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('supplier', 'id')->onDelete('cascade');
             $table->string('description')->nullable();
+            $table->string('image')->nullable();
             $table->decimal('cost_price', 10, 2);
             $table->decimal('sell_price', 10, 2);
             $table->integer('quantity')->default(0);
             $table->timestamps();
+            
         });
     }
 
