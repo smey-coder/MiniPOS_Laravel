@@ -9,9 +9,21 @@ use App\Models\Suppliers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-
-class ProductController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class ProductController extends Controller implements HasMiddleware
 {
+
+    //Manager Permission of the Products
+    public static function middleware(): array {
+        return [
+            new Middleware('permission:view products', only:['index']),
+            new Middleware('permission:create products', only:['create']),
+            new Middleware('permission:edit products', only:['edit']),
+            new Middleware('permission:update products', only:['update']),
+            new Middleware('permission:delete products', only:['destroy']),
+        ];
+    }
     /**
      * Display a listing of products.
      */
