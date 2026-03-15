@@ -9,8 +9,14 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomerControllers;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\EmployeeController;
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('sale', function () {
+    return view('sales.index');
 });
 
 
@@ -91,11 +97,19 @@ Route::middleware(['auth'])->group(function () {
 
     //Customers
     Route::get('/customers', [CustomerControllers::class,'index'])->name('customers.index');
-    // Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    // Route::post('/products', [ProductController::class,'store'])->name('products.store');
-    // Route::get('/products/{id}/edit', [ProductController::class,'edit'])->name('products.edit');
-    // Route::put('/products/{id}', [ProductController::class,'update'])->name('products.update');
-    // Route::delete('/products/{id}', [ProductController::class,'destroy'])->name('products.destroy');
+    Route::get('/customers/create', [CustomerControllers::class, 'create'])->name('customers.create');
+    Route::post('/customers', [CustomerControllers::class,'store'])->name('customers.store');
+    Route::get('/customers/{id}/edit', [CustomerControllers::class,'edit'])->name('customers.edit');
+    Route::put('/customers/{id}', [CustomerControllers::class,'update'])->name('customers.update');
+    Route::delete('/customers/{id}', [CustomerControllers::class,'destroy'])->name('customers.destroy');
+
+    //Jobs
+    Route::resource('/jobs', JobController::class);
+
+    //Employees
+    Route::resource('/employees', EmployeeController::class);
+
+
 });
 
 require __DIR__.'/auth.php';

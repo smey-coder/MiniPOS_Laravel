@@ -1,211 +1,183 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
-                Product / Create
-            </h2>
+    <div class="flex justify-between items-center">
 
-            <a href="{{ route('products.index') }}"
-               class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg shadow">
-                Back
-            </a>
-        </div>
+    <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
+    Customer / Create
+    </h2>
+
+    <a href="{{ route('customers.index') }}"
+    class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg shadow">
+    Back
+    </a>
+
+    </div>
     </x-slot>
 
     <div class="py-10">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border">
+    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border">
 
-                <div class="p-8 text-gray-900 dark:text-gray-100">
+    <div class="p-8 text-gray-900 dark:text-gray-100">
 
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+    <form action="{{ route('customers.store') }}" method="POST">
+    @csrf
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                            <!-- Product Name -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Product Name
-                                </label>
+    <!-- Client Type -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    Client Type
+    </label>
 
-                                <input
-                                    value="{{ old('name') }}"
-                                    type="text"
-                                    name="name"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Enter Product Name">
+    <select name="clientType"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
 
-                                @error('name')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    <option value="">Select Client Type</option>
+    <option value="Retail" {{ old('clientType')=='Retail'?'selected':'' }}>Retail</option>
+    <option value="Wholesale" {{ old('clientType')=='Wholesale'?'selected':'' }}>Wholesale</option>
+    <option value="VIP" {{ old('clientType')=='VIP'?'selected':'' }}>VIP</option>
 
-                            <!-- Barcode -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Barcode
-                                </label>
+    </select>
 
-                                <input
-                                    value="{{ old('barcode') }}"
-                                    type="text"
-                                    name="barcode"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Scan or Enter Barcode">
+    @error('clientType')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                @error('barcode')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    <!-- Customer Name -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    Customer Name
+    </label>
 
-                            <!-- Product Type -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Product Type
-                                </label>
+    <input
+    value="{{ old('name') }}"
+    type="text"
+    name="name"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter customer name">
 
-                                <select name="product_type_id"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+    @error('name')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                    <option value="">Select Type</option>
+    <!-- Phone -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    Phone Number
+    </label>
 
-                                    @foreach ($Product_Types as $type)
-                                        <option value="{{ $type->id }}">
-                                            {{ $type->name }}
-                                        </option>
-                                    @endforeach
+    <input
+    value="{{ old('phone') }}"
+    type="text"
+    name="phone"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter phone number">
 
-                                </select>
+    @error('phone')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                @error('product_type_id')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    <!-- Email -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    Email
+    </label>
 
-                            <!-- Supplier -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Supplier
-                                </label>
+    <input
+    value="{{ old('email') }}"
+    type="email"
+    name="email"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter email (optional)">
 
-                                <select name="supplier_id"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+    @error('email')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                    <option value="">Select Supplier</option>
+    <!-- City -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    City
+    </label>
 
-                                    @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}">
-                                            {{ $supplier->name }}
-                                        </option>
-                                    @endforeach
+    <input
+    value="{{ old('city') }}"
+    type="text"
+    name="city"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter city">
 
-                                </select>
+    @error('city')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                @error('supplier_id')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    <!-- Discount -->
+    <div>
+    <label class="block text-sm font-semibold mb-2">
+    Discount (%)
+    </label>
 
-                            <!-- Cost Price -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Cost Price
-                                </label>
+    <input
+    value="{{ old('discount',0) }}"
+    type="number"
+    step="0.01"
+    name="discount"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter discount">
 
-                                <input
-                                    value="{{ old('cost_price') }}"
-                                    type="number"
-                                    step="0.01"
-                                    name="cost_price"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Enter Cost Price">
+    @error('discount')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                                @error('cost_price')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    </div>
 
-                            <!-- Sell Price -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Sell Price
-                                </label>
+    <!-- Address -->
+    <div class="mt-6">
+    <label class="block text-sm font-semibold mb-2">
+    Address
+    </label>
 
-                                <input
-                                    value="{{ old('sell_price') }}"
-                                    type="number"
-                                    step="0.01"
-                                    name="sell_price"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Enter Sell Price">
+    <textarea
+    name="address"
+    rows="3"
+    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+    placeholder="Enter address">{{ old('address') }}</textarea>
 
-                                @error('sell_price')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    @error('address')
+    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+    </div>
 
-                            <!-- Quantity -->
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">
-                                    Quantity
-                                </label>
+    <!-- Buttons -->
+    <div class="mt-8 flex justify-end gap-3">
 
-                                <input
-                                    value="{{ old('quantity') }}"
-                                    type="number"
-                                    name="quantity"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Enter Quantity">
+    <a href="{{ route('customers.index') }}"
+    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow">
+    Cancel
+    </a>
 
-                                @error('quantity')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+    <button
+    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow font-medium">
+    Create Customer
+    </button>
 
-                        </div>
+    </div>
 
-                        <!-- Description -->
-                        <div class="mt-6">
-                            <label class="block text-sm font-semibold mb-2">
-                                Description
-                            </label>
+    </form>
 
-                            <textarea
-                                name="description"
-                                rows="4"
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-                                placeholder="Enter product description">{{ old('description') }}</textarea>
+    </div>
+    </div>
 
-                            @error('description')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <!-- Product Image -->
-                        <div>
-                            <label class="block text-sm font-semibold mb-2">Product Image</label>
-                            <input type="file" name="image" accept="image/*"
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
-                            @error('image')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Button -->
-                        <div class="mt-8 flex justify-end">
-                            <button
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow font-medium">
-                                Create Product
-                            </button>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
-
-        </div>
+    </div>
     </div>
 
 </x-app-layout>

@@ -47,6 +47,7 @@ class RoleController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
+        //for validate with Form Interface
         $validator = Validator::make($request->all(),[
             'name' => 'required|unique:roles|min:3'
         ]);
