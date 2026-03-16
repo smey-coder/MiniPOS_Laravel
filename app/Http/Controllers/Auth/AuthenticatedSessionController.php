@@ -18,7 +18,6 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.login');
     }
-
     /**
      * Handle an incoming authentication request.
      */
@@ -28,9 +27,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false))->with('success', 'Login successfully! Welcome back.');
     }
-
     /**
      * Destroy an authenticated session.
      */

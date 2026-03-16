@@ -1,4 +1,17 @@
 <x-guest-layout>
+    <!-- Success Message -->
+    @if (session('success'))
+        <div class="mb-4 text-green-600 font-semibold">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- <!-- Error Message -->
+    @if ($errors->any())
+        <div class="mb-4 text-red-600 font-semibold">
+            {{ $errors->first() }}
+        </div>
+    @endif --}}
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
