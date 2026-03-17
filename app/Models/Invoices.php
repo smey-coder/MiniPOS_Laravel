@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Invoice extends Model
+class Invoices extends Model
 {
     protected $table = 'invoices';
     protected $primarykey = 'id';
@@ -24,12 +24,12 @@ class Invoice extends Model
     // Invoice -> Customer
     public function customer()
     {
-        return $this->belongsTo(Customer::class,'customer_id','id');
+        return $this->belongsTo(Customers::class,'customer_id','id');
     }
 
     // Invoice -> Employee
     public function employee()
     {
-        return $this->belongsTo(Employee::class,'employee_id','id');
+        return $this->belongsTo(Employees::class,'employee_id','id');
     }
 }

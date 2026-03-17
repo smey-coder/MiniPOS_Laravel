@@ -25,4 +25,8 @@ class Invoice_Details extends Model
     {
         return $this->belongsTo(Products::class, 'product_id', 'id');
     }
+    public function customer()
+    {
+        return $this->belongsTo(Customers::class);
+    }
 }

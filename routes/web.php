@@ -11,6 +11,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomerControllers;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SaleControllers;
+use App\Http\Controllers\POSControllers;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -109,6 +111,11 @@ Route::middleware(['auth'])->group(function () {
     //Employees
     Route::resource('/employees', EmployeeController::class);
 
+    //Sales
+    Route::get('/pos', [POSControllers::class, 'index'])->name('pos.index');
+    Route::post('/checkout', [POSControllers::class, 'checkout'])->name('pos.checkout');
+    Route::get('/invoice/{id}', [POSControllers::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{id}/thermal', [POSControllers::class, 'thermal'])->name('invoice.thermal');
 
 });
 

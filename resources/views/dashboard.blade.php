@@ -45,14 +45,14 @@
             <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
                 <p class="text-gray-500">Revenue Today</p>
                 <h3 class="text-3xl font-bold text-green-600">
-                    {{-- ${{ \App\Models\Order::whereDate('created_at',today())->sum('total') ?? 0 }} --}}
+                    ${{ \DB::table('invoice_details')->join('invoices', 'invoice_details.invoice_id', '=', 'invoices.id')->whereDate('invoices.created_at', today())->sum('invoice_details.total') }}
                 </h3>
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
                 <p class="text-gray-500">Orders Today</p>
                 <h3 class="text-3xl font-bold text-indigo-600">
-                    {{-- {{ \App\Models\Order::whereDate('created_at',today())->count() ?? 0 }} --}}
+                    {{ \App\Models\Invoices::whereDate('created_at', today())->count() }}
                 </h3>
             </div>
 
@@ -157,20 +157,16 @@
 
                 <tbody>
 
-                {{-- @foreach(\App\Models\Order::latest()->take(5)->get() as $order) --}}
+                @foreach(\App\Models\Invoices::latest()->take(5)->get() as $order)
 
                     <tr class="border-b">
-
-                        {{-- 
                         <td>#{{ $order->id }}</td>
-                        <td>{{ $order->customer_name }}</td>
-                        <td class="text-green-600">${{ $order->total }}</td>
+                        <td>{{ $order->customer->name }}</td>
+                        <td class="text-green-600">${{ $order->details->sum('total') }}</td>
                         <td>{{ $order->created_at->format('d M Y') }}</td>
-                        --}}
-
                     </tr>
 
-                {{-- @endforeach --}}
+                @endforeach
 
                 </tbody>
 
