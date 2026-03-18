@@ -13,13 +13,14 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SaleControllers;
 use App\Http\Controllers\POSControllers;
+use App\Http\Controllers\DashboardControllers;
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('sale', function () {
-    return view('sales.index');
-});
+// Route::get('sale', function () {
+//     return view('sales.index');
+// });
 
 
 
@@ -29,15 +30,13 @@ Route::get('sale', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])->group(function () {
+// Route::middleware(['auth', 'admin'])->group(function () {
 
-    Route::get('/admin', function () {
-         return view('layouts.admin.admin_layout');
-    });
+//     Route::get('/admin', function () {
+//          return view('layouts.admin.admin_layout');
+//     });
 
-});
-
-Route::get('/roles', [RoleController::class, 'index']);
+// });
 /*
 |--------------------------------------------------------------------------
 | Authenticated User Routes
@@ -46,9 +45,9 @@ Route::get('/roles', [RoleController::class, 'index']);
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware('verified')->name('dashboard');
+    Route::get('/dashboard', [DashboardControllers::class, 'dashboard'])
+    ->middleware(['auth','verified'])
+    ->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 

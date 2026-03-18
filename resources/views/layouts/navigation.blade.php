@@ -48,17 +48,21 @@
                     </x-nav-link>
                 </div>
                 @endcan
+                @can('view jobs')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('jobs.index')" :active="request()->routeIs('jobs')">
                         {{ __('Jobs') }}
                     </x-nav-link>
                 </div>
+                @endcan
                 {{-- Employee --}}
+                @can('view employees')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees')">
                         {{ __('Employees') }}
                     </x-nav-link>
                 </div>
+                @endcan
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -74,25 +78,27 @@
                         </x-slot>
 
                         <x-slot name="content">
+                            @can('view products')
                             <x-dropdown-link :href="route('products.index')">
                                 {{ __('Products') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('profile.edit')">
+                            @endcan
+                            {{-- <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Product Type') }}
-                            </x-dropdown-link>
-                            <x-dropdown-link :href="route('profile.edit')">
+                            </x-dropdown-link> --}}
+                            {{-- <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Supplier') }}
-                            </x-dropdown-link>
+                            </x-dropdown-link> --}}
                         
                             <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}">
+                            {{-- <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
                                         onclick="event.preventDefault();
                                                     this.closest('form').submit();">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
-                            </form>
+                            </form> --}}
                         </x-slot>
                     </x-dropdown>
                 </div>
@@ -111,19 +117,24 @@
                         </x-slot>
 
                         <x-slot name="content">
+                            @can('view customers')
                             <x-dropdown-link :href="route('customers.index')">
                                 {{ __('Customers') }}
                             </x-dropdown-link>
+                            @endcan
+                            @can('view sales')
                             <x-dropdown-link :href="route('pos.index')">
                                 {{ __('Sale') }}
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('profile.edit')">
+                            @endcan
+                            {{-- <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Supplier') }}
-                            </x-dropdown-link>
+                            </x-dropdown-link> --}}
                             
                         </x-slot>
                     </x-dropdown>
                 </div>
+                
             </div>
 
             <!-- Settings Dropdown -->
@@ -299,4 +310,5 @@
             </div>
         </div>
     </div>
+    
 </nav>

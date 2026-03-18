@@ -7,9 +7,20 @@ use App\Models\Products;
 use App\Models\Customers;
 use App\Models\Invoice_Details;
 use App\Models\Invoices;
-
-class POSControllers extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class POSControllers extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array {
+        return [
+            new Middleware('permission:view sales', only:['index']),
+            new Middleware('permission:show thermals', only:['thermal']),
+            new Middleware('permission:sale shows', only:['shows']),
+            new Middleware('permission:create invoices', only:['checkout']),
+            // new Middleware('permission:delete articles', only:['destroy']),
+        ];
+    }
     // Show POS page
     public function index()
     {
@@ -27,25 +38,35 @@ class POSControllers extends Controller
     // Checkout (SAVE INVOICE)
     public function checkout(Request $request)
     {
-        try {
+            try {
             $request->validate([
                 'items' => 'required|array|min:1',
                 'customer_id' => 'required|exists:customers,id'
             ]);
 
+            // Get employee linked to current user
+            $employee = \App\Models\Employees::where('user_id', auth()->id())->first();
+
+            if (!$employee) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Current user is not linked to an employee record.'
+                ]);
+            }
+
             // Create Invoice
-            $invoice = Invoices::create([
+            $invoice = \App\Models\Invoices::create([
                 'customer_id' => $request->customer_id,
-                'employee_id' => auth()->id() ?? 1,
+                'employee_id' => $employee->id,  // use employee ID
                 'invoice_status' => 'Completed',
                 'memo' => $request->memo
             ]);
 
-            // Save items
+            // Save items and update stock
             foreach ($request->items as $item) {
                 $total = $item['qty'] * $item['price'];
 
-                Invoice_Details::create([
+                \App\Models\Invoice_Details::create([
                     'invoice_id' => $invoice->id,
                     'product_id' => $item['id'],
                     'quantity' => $item['qty'],
@@ -53,8 +74,8 @@ class POSControllers extends Controller
                     'total' => $total
                 ]);
 
-                // Update stock
-                $product = Products::find($item['id']);
+                // Update product stock
+                $product = \App\Models\Products::find($item['id']);
                 if ($product) {
                     $product->quantity -= $item['qty'];
                     $product->save();
@@ -65,11 +86,13 @@ class POSControllers extends Controller
                 'success' => true,
                 'invoice_id' => $invoice->id
             ]);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed: ' . implode(', ', $e->errors()['items'] ?? $e->errors()['customer_id'] ?? ['Unknown validation error'])
             ], 422);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

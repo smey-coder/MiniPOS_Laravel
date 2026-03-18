@@ -5,9 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Job;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class JobController extends Controller
+class JobController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array {
+        return [
+            new Middleware('permission:view jobs', only:['index']),
+            new Middleware('permission:edit jobs', only:['edit']),
+            new Middleware('permission:update jobs', only:['update']),
+            new Middleware('permission:create jobs', only:['create']),
+            new Middleware('permission:delete jobs', only:['destroy']),
+        ];
+    }
     /**
      * Display a listing of jobs
      */

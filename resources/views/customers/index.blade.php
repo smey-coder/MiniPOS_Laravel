@@ -82,7 +82,7 @@
                                     </td>
 
                                     <td class="px-6 py-4 text-green-600 font-semibold">
-                                        ${{$customer->discount}}
+                                        %{{$customer->discount}}
                                     </td>
 
                                     <td class="px-6 py-4 text-red-500">

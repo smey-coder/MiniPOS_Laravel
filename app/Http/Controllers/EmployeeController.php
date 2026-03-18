@@ -8,9 +8,20 @@ use App\Models\job;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
-class EmployeeController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class EmployeeController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array {
+        return [
+            new Middleware('permission:view employees', only:['index']),
+            new Middleware('permission:edit employees', only:['edit']),
+            new Middleware('permission:update employees', only:['update']),
+            new Middleware('permission:create employees', only:['create']),
+            new Middleware('permission:delete employees', only:['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
