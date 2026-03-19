@@ -23,7 +23,6 @@ class DashboardControllers extends Controller
                 $q->where('name', 'like', "%$search%");
             })->orWhere('id', $search);
         }
-
         // Date Filter
         $filter = $request->get('filter', 'today');
         if ($filter == 'today') {

@@ -1,183 +1,185 @@
 <x-app-layout>
     <x-slot name="header">
-    <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center">
 
-    <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
-    Customer / Create
-    </h2>
+            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
+                Customer / Create
+            </h2>
 
-    <a href="{{ route('customers.index') }}"
-    class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg shadow">
-    Back
-    </a>
+            <a href="{{ route('customers.index') }}"
+               class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg shadow">
+                Back
+            </a>
 
-    </div>
+        </div>
     </x-slot>
 
     <div class="py-10">
-    <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border">
+            <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border">
 
-    <div class="p-8 text-gray-900 dark:text-gray-100">
+                <div class="p-8 text-gray-900 dark:text-gray-100">
 
-    <form action="{{ route('customers.store') }}" method="POST">
-    @csrf
+                    <form action="{{ route('customers.store') }}" method="POST">
+                        @csrf
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <!-- Client Type -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    Client Type
-    </label>
+                            <!-- Client Type -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    Client Type
+                                </label>
 
-    <select name="clientType"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                <select name="clientType"
+                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select Client Type</option>
+                                    <option value="Retail" {{ old('clientType')=='Retail'?'selected':'' }}>Retail</option>
+                                    <option value="Wholesale" {{ old('clientType')=='Wholesale'?'selected':'' }}>Wholesale</option>
+                                    <option value="VIP" {{ old('clientType')=='VIP'?'selected':'' }}>VIP</option>
+                                </select>
+                                @error('clientType')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <option value="">Select Client Type</option>
-    <option value="Retail" {{ old('clientType')=='Retail'?'selected':'' }}>Retail</option>
-    <option value="Wholesale" {{ old('clientType')=='Wholesale'?'selected':'' }}>Wholesale</option>
-    <option value="VIP" {{ old('clientType')=='VIP'?'selected':'' }}>VIP</option>
+                            <!-- Customer Name -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    Customer Name
+                                </label>
 
-    </select>
+                                <input
+                                    value="{{ old('name') }}"
+                                    type="text"
+                                    name="name"
+                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="Enter customer name">
 
-    @error('clientType')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                                @error('name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <!-- Customer Name -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    Customer Name
-    </label>
+                            <!-- Phone -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    Phone Number
+                                </label>
 
-    <input
-    value="{{ old('name') }}"
-    type="text"
-    name="name"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter customer name">
+                                <input
+                                    value="{{ old('phone') }}"
+                                    type="text"
+                                    name="phone"
+                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="Enter phone number">
 
-    @error('name')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                                @error('phone')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <!-- Phone -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    Phone Number
-    </label>
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    Email
+                                </label>
 
-    <input
-    value="{{ old('phone') }}"
-    type="text"
-    name="phone"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter phone number">
+                                <input
+                                    value="{{ old('email') }}"
+                                    type="email"
+                                    name="email"
+                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="Enter email (optional)">
 
-    @error('phone')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                                @error('email')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <!-- Email -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    Email
-    </label>
+                            <!-- City -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    City
+                                </label>
 
-    <input
-    value="{{ old('email') }}"
-    type="email"
-    name="email"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter email (optional)">
+                                <select name="city"
+                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select City</option>
+                                    <option value="Phnom Penh" {{ old('city')=='Phnom Penh'?'selected':'' }}>Phnom Penh</option>
+                                    <option value="Battambang" {{ old('city')=='Battambang'?'selected':'' }}>Battambang</option>
+                                    <option value="Siem Reap" {{ old('city')=='Siem Reap'?'selected':'' }}>Siem Reap</option>
+                                    <option value="Sihanoukville" {{ old('city')=='Sihanoukville'?'selected':'' }}>Sihanoukville</option>
+                                    <option value="Kampong Cham" {{ old('city')=='Kampong Cham'?'selected':'' }}>Kampong Cham</option>
+                                    <option value="Kampong Thom" {{ old('city')=='Kampong Thom'?'selected':'' }}>Kampong Thom</option>
+                                    <!-- Add more cities as needed -->
+                                </select>
 
-    @error('email')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                                @error('city')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <!-- City -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    City
-    </label>
+                            <!-- Discount -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">
+                                    Discount (%)
+                                </label>
 
-    <input
-    value="{{ old('city') }}"
-    type="text"
-    name="city"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter city">
+                                <input
+                                    value="{{ old('discount',0) }}"
+                                    type="number"
+                                    step="0.01"
+                                    name="discount"
+                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="Enter discount">
 
-    @error('city')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                                @error('discount')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-    <!-- Discount -->
-    <div>
-    <label class="block text-sm font-semibold mb-2">
-    Discount (%)
-    </label>
+                        </div>
 
-    <input
-    value="{{ old('discount',0) }}"
-    type="number"
-    step="0.01"
-    name="discount"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter discount">
+                        <!-- Address -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold mb-2">
+                                Address
+                            </label>
 
-    @error('discount')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                            <textarea
+                                name="address"
+                                rows="3"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Enter address">{{ old('address') }}</textarea>
 
-    </div>
+                            @error('address')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-    <!-- Address -->
-    <div class="mt-6">
-    <label class="block text-sm font-semibold mb-2">
-    Address
-    </label>
+                        <!-- Buttons -->
+                        <div class="mt-8 flex justify-end gap-3">
 
-    <textarea
-    name="address"
-    rows="3"
-    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
-    placeholder="Enter address">{{ old('address') }}</textarea>
+                            <a href="{{ route('customers.index') }}"
+                               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow">
+                                Cancel
+                            </a>
 
-    @error('address')
-    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    </div>
+                            <button
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow font-medium">
+                                Create Customer
+                            </button>
 
-    <!-- Buttons -->
-    <div class="mt-8 flex justify-end gap-3">
+                        </div>
 
-    <a href="{{ route('customers.index') }}"
-    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow">
-    Cancel
-    </a>
+                    </form>
 
-    <button
-    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow font-medium">
-    Create Customer
-    </button>
+                </div>
+            </div>
 
-    </div>
-
-    </form>
-
-    </div>
-    </div>
-
-    </div>
+        </div>
     </div>
 
 </x-app-layout>

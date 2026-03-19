@@ -68,16 +68,13 @@
 <script>
 let cart = [];
 let discountPercent = 0; // Customer discount
-
 function addToCart(id,name,price){
     let item = cart.find(p => p.id === id)
-
     if(item){
         item.qty++
     }else{
         cart.push({id,name,price,qty:1})
     }
-
     renderCart()
 }
 
@@ -86,10 +83,8 @@ function renderCart(){
     let subtotal=0
 
     cart.forEach((item,index)=>{
-
         let itemTotal = item.qty * item.price
         subtotal += itemTotal
-
         html += `
         <tr>
             <td>${item.name}</td>
@@ -114,7 +109,6 @@ function removeItem(i){
     cart.splice(i,1)
     renderCart()
 }
-
 function searchProduct(){
     let input = document.getElementById('search').value.toLowerCase()
     let cards = document.querySelectorAll('.product-card')
@@ -124,7 +118,6 @@ function searchProduct(){
         card.style.display = name.includes(input) ? '' : 'none'
     })
 }
-
 // Update discount when customer changes
 function updateDiscount(){
     let select = document.getElementById('customer')
@@ -133,17 +126,14 @@ function updateDiscount(){
 }
 
 function checkout(){
-
     if(cart.length === 0){
         alert("Cart is empty!")
         return
     }
-
     if(!document.getElementById('customer').value){
         alert("Please select a customer!")
         return
     }
-
     fetch("{{ route('pos.checkout') }}",{
         method:'POST',
         headers:{
