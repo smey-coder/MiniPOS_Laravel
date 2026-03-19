@@ -7,20 +7,11 @@ use App\Models\Products;
 use App\Models\Customers;
 use App\Models\Invoice_Details;
 use App\Models\Invoices;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
-class POSControllers extends Controller implements HasMiddleware
-{
+use App\Models\Employees;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-    public static function middleware(): array {
-        return [
-            new Middleware('permission:view sales', only:['index']),
-            new Middleware('permission:show thermals', only:['thermal']),
-            new Middleware('permission:sale shows', only:['shows']),
-            new Middleware('permission:create invoices', only:['checkout']),
-            // new Middleware('permission:delete articles', only:['destroy']),
-        ];
-    }
+class POSControllers extends Controller
+{
     // Show POS page
     public function index()
     {
@@ -29,23 +20,43 @@ class POSControllers extends Controller implements HasMiddleware
             'customers' => Customers::all()
         ]);
     }
+
+    // Thermal (Invoice with QR)
     public function thermal($id)
     {
-        $invoice = Invoices::with('details.product','customer')->findOrFail($id);
-        return view('invoices.thermal', compact('invoice'));
+        // Get invoice with details and customer
+        $invoice = Invoices::with('details.product', 'customer')->findOrFail($id);
+
+        // Calculate grand total
+        $grandTotal = $invoice->details->sum('total');
+
+        // Format amount for QR
+        $amount = number_format($grandTotal, 2, '.', '');
+
+        // Bank info (example ABA/ACLEDA)
+        $merchantAccount = '0968789324'; // Your bank account
+        $merchantName = 'TECHNOLOGY SHOP';
+        $invoiceRef = 'INV' . $invoice->id;
+
+        // QR code string format
+        $qrText = "BANK:ACLEDA;ACC:{$merchantAccount};AMOUNT:{$amount};REF:{$invoiceRef};NAME:{$merchantName}";
+
+        // Generate QR code SVG
+        $qrCodeSvg = QrCode::size(200)->generate($qrText);
+
+        return view('invoices.thermal', compact('invoice', 'grandTotal', 'qrCodeSvg'));
     }
 
-    // Checkout (SAVE INVOICE)
+    // Checkout (Save Invoice + Generate QR for Payment)
     public function checkout(Request $request)
     {
-            try {
+        try {
             $request->validate([
                 'items' => 'required|array|min:1',
                 'customer_id' => 'required|exists:customers,id'
             ]);
 
-            // Get employee linked to current user
-            $employee = \App\Models\Employees::where('user_id', auth()->id())->first();
+            $employee = Employees::where('user_id', auth()->id())->first();
 
             if (!$employee) {
                 return response()->json([
@@ -55,18 +66,20 @@ class POSControllers extends Controller implements HasMiddleware
             }
 
             // Create Invoice
-            $invoice = \App\Models\Invoices::create([
+            $invoice = Invoices::create([
                 'customer_id' => $request->customer_id,
-                'employee_id' => $employee->id,  // use employee ID
-                'invoice_status' => 'Completed',
-                'memo' => $request->memo
+                'employee_id' => $employee->id,
+                'invoice_status' => 'Completed', // start as Pending
+                'memo' => $request->memo ?? null
             ]);
 
             // Save items and update stock
+            $grandTotal = 0;
             foreach ($request->items as $item) {
                 $total = $item['qty'] * $item['price'];
+                $grandTotal += $total;
 
-                \App\Models\Invoice_Details::create([
+                Invoice_Details::create([
                     'invoice_id' => $invoice->id,
                     'product_id' => $item['id'],
                     'quantity' => $item['qty'],
@@ -74,17 +87,27 @@ class POSControllers extends Controller implements HasMiddleware
                     'total' => $total
                 ]);
 
-                // Update product stock
-                $product = \App\Models\Products::find($item['id']);
+                $product = Products::find($item['id']);
                 if ($product) {
                     $product->quantity -= $item['qty'];
                     $product->save();
                 }
             }
 
+            // Generate QR code for payment
+            $amount = number_format($grandTotal, 2, '.', '');
+            $merchantAccount = '0968789324'; // Your bank account
+            $merchantName = 'TECHNOLOGY SHOP';
+            $invoiceRef = 'INV' . $invoice->id;
+            $qrText = "BANK:ACLEDA;ACC:{$merchantAccount};AMOUNT:{$amount};REF:{$invoiceRef};NAME:{$merchantName}";
+            $qrCodeSvg = QrCode::size(200)->generate($qrText);
+
+            // Return invoice with QR for payment
             return response()->json([
                 'success' => true,
-                'invoice_id' => $invoice->id
+                'invoice_id' => $invoice->id,
+                'grand_total' => $grandTotal,
+                'qr_code' => $qrCodeSvg
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -101,10 +124,18 @@ class POSControllers extends Controller implements HasMiddleware
         }
     }
 
-    // Show Invoice
-    public function show($id)
+    // Confirm Payment (Optional endpoint to mark invoice as Paid)
+    public function confirmPayment($id)
     {
-        $invoice = Invoices::with('details.product','customer')->findOrFail($id);
-        return view('invoices.show', compact('invoice'));
+        $invoice = Invoices::findOrFail($id);
+
+        // Here you can call bank API to confirm payment or mark manually
+        $invoice->invoice_status = 'Completed';
+        $invoice->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment confirmed for Invoice #' . $invoice->id
+        ]);
     }
 }

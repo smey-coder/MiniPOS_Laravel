@@ -14,10 +14,12 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SaleControllers;
 use App\Http\Controllers\POSControllers;
 use App\Http\Controllers\DashboardControllers;
+use App\Http\Controllers\QrcodeController;
 Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/generate-qrcode', [QrCodeController::class, 'generate']);
 // Route::get('sale', function () {
 //     return view('sales.index');
 // });

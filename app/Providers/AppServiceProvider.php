@@ -20,8 +20,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user, $ability) {
-        return $user->hasRole('superadmin') ? true : null;
-    });
+        // Check if Gate class exists
+        if (class_exists(Gate::class)) {
+            Gate::before(function ($user, $ability) {
+                if ($user && method_exists($user, 'hasRole')) {
+                    return $user->hasRole('superadmin') ? true : null;
+                }
+            });
+        }
     }
 }
