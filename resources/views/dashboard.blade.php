@@ -156,7 +156,6 @@
 
             @php
             $orders = \App\Models\Invoices::with(['customer','details'])
-
                 // 🔍 Search by customer name
                 ->when(request('search'), function($q){
                     $q->whereHas('customer', function($c){

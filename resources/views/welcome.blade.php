@@ -28,7 +28,6 @@
 
 <!-- PARTICLES -->
 <div id="particles"></div>
-
 <!-- NAVBAR -->
 <nav class="flex justify-between items-center px-8 py-4 backdrop-blur-xl bg-white/40 dark:bg-gray-800/40 shadow-lg border-b border-white/20">
 
