@@ -13,8 +13,12 @@ class Suppliers extends Model
         'name',
         'phone',
         'email',
-        'address'
+        'address',
+        'description',
     ];
-
     protected $tiemestamps = true;
+
+    public function purchase(){
+        return $this->hasMany(Purchase::class, 'purchase_id', 'id');
+    }
 }

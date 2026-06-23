@@ -43,14 +43,10 @@ class JobController extends Controller implements HasMiddleware
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'company' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'min_salary' => 'nullable|numeric',
             'max_salary' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-            'description' => 'nullable|string',
-            'deadline' => 'nullable|date',
-            'status' => 'required|in:open,closed'
         ]);
 
         $imageName = null;
@@ -65,13 +61,9 @@ class JobController extends Controller implements HasMiddleware
         Job::create([
             'title' => $request->title,
             'description' => $request->description,
-            'company' => $request->company,
-            'location' => $request->location,
             'min_salary' => $request->min_salary,
             'max_salary' => $request->max_salary,
-            'image' => $imageName,
-            'deadline' => $request->deadline,
-            'status' => $request->status
+            'image' => $imageName
         ]);
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
@@ -92,14 +84,10 @@ class JobController extends Controller implements HasMiddleware
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'company' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
             'min_salary' => 'nullable|numeric',
             'max_salary' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'description' => 'nullable|string',
-            'deadline' => 'nullable|date',
-            'status' => 'required|in:open,closed'
         ]);
 
         $imageName = $job->image;
@@ -118,13 +106,9 @@ class JobController extends Controller implements HasMiddleware
         $job->update([
             'title' => $request->title,
             'description' => $request->description,
-            'company' => $request->company,
-            'location' => $request->location,
             'min_salary' => $request->min_salary,
             'max_salary' => $request->max_salary,
-            'image' => $imageName,
-            'deadline' => $request->deadline,
-            'status' => $request->status
+            'image' => $imageName
         ]);
 
         return redirect()->route('jobs.index')->with('success', 'Job updated successfully.');

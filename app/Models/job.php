@@ -13,13 +13,9 @@ class job extends Model
     protected $fillable = [
         'title',
         'description',
-        'company',
-        'location',
         'min_salary',
         'max_salary',
         'image',
-        'deadline',
-        'status'
     ];
 
     public $timestamps = true;

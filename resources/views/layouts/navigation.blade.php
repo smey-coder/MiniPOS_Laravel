@@ -83,12 +83,16 @@
                                 {{ __('Products') }}
                             </x-dropdown-link>
                             @endcan
-                            {{-- <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Product Type') }}
-                            </x-dropdown-link> --}}
-                            {{-- <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Supplier') }}
-                            </x-dropdown-link> --}}
+                            @can('view purchase')
+                            <x-dropdown-link :href="route('purchases.index')">
+                                {{ __('Purchases') }}
+                            </x-dropdown-link>
+                            @endcan
+                            @can('view purchase_detail')
+                            <x-dropdown-link :href="route('purchase_details.index')">
+                                {{ __('Purchase Details') }}
+                            </x-dropdown-link>
+                            @endcan
                         
                             <!-- Authentication -->
                             {{-- <form method="POST" action="{{ route('logout') }}">
@@ -102,6 +106,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                @can('view sale')
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -122,7 +127,7 @@
                                 {{ __('Customers') }}
                             </x-dropdown-link>
                             @endcan
-                            @can('view sales')
+                            @can('view sale')
                             <x-dropdown-link :href="route('pos.index')">
                                 {{ __('Sale') }}
                             </x-dropdown-link>
@@ -134,6 +139,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                @endcan
                 
             </div>
 

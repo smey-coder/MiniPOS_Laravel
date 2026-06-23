@@ -22,4 +22,8 @@ class Employees extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function purchase(){
+        return $this->hasMany(Purchase::class, 'purchase_id','id');
+    }
 }

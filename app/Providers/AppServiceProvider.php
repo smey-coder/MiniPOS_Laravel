@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Purchase_Detail;
+use App\Observers\PurchaseDetailObserver;
+use App\Observers\PurchaseObserver;
+use App\Models\Purchase;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,5 +32,8 @@ class AppServiceProvider extends ServiceProvider
                 }
             });
         }
+        Purchase_Detail::observe(PurchaseDetailObserver::class);
+        Purchase::observe(PurchaseObserver::class);
     }
+
 }

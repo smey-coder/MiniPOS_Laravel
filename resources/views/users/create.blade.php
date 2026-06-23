@@ -14,16 +14,12 @@
 
     <div class="py-10">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
             <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border">
-
                 <div class="p-8 text-gray-900 dark:text-gray-100">
-
-                    <form action="{{ route('users.store') }}" method="POST">
+                    <form action="{{ route('users.store') }}" method="POST" autocomplete="off">
                         @csrf
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                             <!-- Name -->
                             <div>
                                 <label class="block text-sm font-semibold mb-2">
@@ -47,17 +43,17 @@
                                 <label class="block text-sm font-semibold mb-2">
                                     Email
                                 </label>
+                                    <input
+                                        value="{{ old('email') }}"
+                                        type="email"
+                                        name="email"
+                                        autocomplete="email"
+                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="Enter Email">
 
-                                <input
-                                    value="{{ old('email') }}"
-                                    type="email"
-                                    name="email"
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="Enter Email">
-
-                                @error('email')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
+                                    @error('email')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                             </div>
 
                             <!-- Password -->
@@ -69,6 +65,7 @@
                                 <input
                                     type="password"
                                     name="password"
+                                    autocomplete="new-password"
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Enter Password">
 
@@ -86,6 +83,7 @@
                                 <input
                                     type="password"
                                     name="confirm_password"
+                                    autocomplete="new-password"
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Confirm Your Password">
 

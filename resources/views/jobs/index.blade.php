@@ -1,168 +1,128 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Jobs') }}
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                Jobs Management
             </h2>
 
-            <a href="{{ route('jobs.create')}}" 
-               class="bg-slate-700 text-sm rounded-md text-white px-3 py-3 hover:bg-slate-600">
-                Create
+            <a href="{{ route('jobs.create') }}"
+               class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow">
+                + Create Job
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <x-message></x-message>
+            <x-message />
 
-            <table class="w-full">
+            <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden">
 
-                <thead class="bg-gray-50">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
 
-                    <tr class="border-b">
+                        <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-xs">
+                            <tr>
+                                <th class="px-6 py-4">#</th>
+                                <th class="px-6 py-4">Image</th>
+                                <th class="px-6 py-4">Title</th>
+                                <th class="px-6 py-4">Salary</th>
+                                <th class="px-6 py-4">Created</th>
+                                <th class="px-6 py-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
 
-                        <th class="px-6 py-3 text-left" width="60">#</th>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 
-                        <th class="px-6 py-3 text-left">Image</th>
+                            @forelse ($jobs as $j)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
 
-                        <th class="px-6 py-3 text-left">Title</th>
+                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                        {{ $j->id }}
+                                    </td>
 
-                        <th class="px-6 py-3 text-left">Company</th>
+                                    <td class="px-6 py-4">
+                                        @if($j->image)
+                                            <img src="{{ asset('storage/jobs/'.$j->image) }}"
+                                                 class="w-12 h-12 rounded-lg object-cover border"
+                                                 alt="Job Image">
+                                        @else
+                                            <span class="text-gray-400 text-xs">No Image</span>
+                                        @endif
+                                    </td>
 
-                        <th class="px-6 py-3 text-left">Salary</th>
+                                    <td class="px-6 py-4 font-semibold text-gray-800 dark:text-gray-100">
+                                        {{ $j->title }}
+                                    </td>
 
-                        <th class="px-6 py-3 text-left" width="180">Created</th>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                                            ${{ $j->min_salary }} - ${{ $j->max_salary }}
+                                        </span>
+                                    </td>
 
-                        <th class="px-6 py-3 text-center" width="180">Action</th>
+                                    <td class="px-6 py-4 text-gray-500 dark:text-gray-300">
+                                        {{ \Carbon\Carbon::parse($j->created_at)->format('d M Y') }}
+                                    </td>
 
-                    </tr>
+                                    <td class="px-6 py-4 text-center space-x-2">
 
-                </thead>
+                                        <a href="{{ route('jobs.edit', $j->id) }}"
+                                           class="inline-block px-3 py-1 text-xs bg-yellow-500 hover:bg-yellow-600 text-white rounded-md">
+                                            Edit
+                                        </a>
 
+                                        <button onclick="deleteJob({{ $j->id }})"
+                                                class="inline-block px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded-md">
+                                            Delete
+                                        </button>
 
-                <tbody class="bg-white">
+                                    </td>
 
-                    @if($jobs->isNotEmpty())
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-10 text-gray-500">
+                                        No jobs found.
+                                    </td>
+                                </tr>
+                            @endforelse
 
-                    @foreach ($jobs as $j)
+                        </tbody>
 
-                    <tr class="border-b">
+                    </table>
+                </div>
+            </div>
 
-                        <td class="px-6 py-3 text-left">
-                            {{ $j->id }}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @if($j->image)
-                                    <img src="{{ asset('storage/jobs/'.$j->image) }}" 
-                                        alt="Job Image" 
-                                        class="w-12 h-12 object-cover rounded-lg">
-                            @else
-                                <span class="text-gray-400 text-xs">No Image</span>
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-3 text-left">
-                            {{ $j->title }}
-                        </td>
-
-                        <td class="px-6 py-3 text-left">
-                            {{ $j->company }}
-                        </td>
-
-
-                        <td class="px-6 py-3 text-left text-green-600 font-semibold">
-
-                            ${{ $j->min_salary }} - ${{ $j->max_salary }}
-
-                        </td>
-
-
-                        <td class="px-6 py-3 text-left">
-
-                            {{ \Carbon\Carbon::parse($j->created_at)->format('d M, Y') }}
-
-                        </td>
-
-
-                        <td class="px-6 py-3 text-center">
-
-                            <a href="{{ route('jobs.edit', $j->id)}}"
-                               class="bg-slate-700 text-sm rounded-md text-white px-3 py-2 hover:bg-slate-600">
-
-                                Edit
-
-                            </a>
-
-
-                            <a href="javascript:void(0)"
-                               onclick="deleteJob({{ $j->id }})"
-                               class="bg-red-700 text-sm rounded-md text-white px-3 py-2 hover:bg-red-600">
-
-                                Delete
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    @endforeach
-
-                    @endif
-
-                </tbody>
-
-            </table>
-
-
-            <div class="my-3">
-
+            <div class="mt-6">
                 {{ $jobs->links() }}
-
             </div>
 
         </div>
     </div>
 
+    <x-slot name="script">
+        <script>
+            function deleteJob(id) {
+                if (!confirm("Are you sure you want to delete this job?")) return;
 
-
-<x-slot name="script">
-
-<script type="text/javascript">
-
-function deleteJob(id){
-
-if(confirm("Are you sure want to delete?")){
-
-$.ajax({
-
-url : '{{ route("jobs.destroy", ":id") }}'.replace(':id', id),
-
-type: 'delete',
-
-dataType: 'json',
-
-headers: {
-'x-csrf-token' : '{{ csrf_token() }}'
-},
-
-success: function(response){
-
-window.location.href = '{{ route("jobs.index") }}';
-
-}
-
-});
-
-}
-
-}
-
-</script>
-
-</x-slot>
+                $.ajax({
+                    url: '{{ route("jobs.destroy", ":id") }}'.replace(':id', id),
+                    type: 'DELETE',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function () {
+                        alert("Something went wrong!");
+                    }
+                });
+            }
+        </script>
+    </x-slot>
 
 </x-app-layout>

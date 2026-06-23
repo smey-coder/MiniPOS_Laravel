@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniPOS Pro</title>
+    <title>{{ config('app.name', 'Technology Shop') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/png" href="{{ asset('images/miniPOS.png') }}">
 
     <!-- Particles -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>

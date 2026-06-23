@@ -48,23 +48,6 @@ Back
 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
 </div>
 
-
-<!-- Company -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Company</label>
-<input type="text" name="company"
-class="w-full border-gray-300 rounded-md shadow-sm">
-</div>
-
-
-<!-- Location -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Location</label>
-<input type="text" name="location"
-class="w-full border-gray-300 rounded-md shadow-sm">
-</div>
-
-
 <!-- Salary -->
 <div class="grid grid-cols-2 gap-4">
 
@@ -98,28 +81,6 @@ class="w-full border-gray-300 rounded-md shadow-sm">
 class="w-full border-gray-300 rounded-md shadow-sm"
 rows="4"></textarea>
 </div>
-
-
-<!-- Deadline -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Deadline</label>
-<input type="date" name="deadline"
-class="w-full border-gray-300 rounded-md shadow-sm">
-</div>
-
-
-<!-- Status -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Status</label>
-<select name="status"
-class="w-full border-gray-300 rounded-md shadow-sm">
-
-<option value="open">Open</option>
-<option value="closed">Closed</option>
-
-</select>
-</div>
-
 
 <!-- Button -->
 <div class="mt-6">

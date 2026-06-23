@@ -1,192 +1,230 @@
-
 <x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Edit Customer
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Update customer information
+                </p>
+            </div>
 
-<x-slot name="header">
-<div class="flex justify-between items-center">
+            <a href="{{ route('customers.index') }}"
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow">
+                ← Back
+            </a>
+        </div>
+    </x-slot>
 
-<h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
-Customer / Edit
-</h2>
+    <div class="py-10">
+        <div class="max-w-5xl mx-auto px-6">
 
-<a href="{{ route('customers.index') }}"
-class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg shadow">
-Back
-</a>
+            <x-message />
 
-</div>
-</x-slot>
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-<div class="py-10">
-<div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
 
-<div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border">
+                    <div class="flex items-center gap-4">
 
-<div class="p-8 text-gray-900 dark:text-gray-100">
+                        <div
+                            class="w-16 h-16 rounded-full bg-white text-indigo-600 flex items-center justify-center text-2xl font-bold shadow">
 
-<form action="{{ route('customers.update',$customer->id) }}" method="POST">
-@csrf
-@method('PUT')
+                            {{ strtoupper(substr($customer->name,0,1)) }}
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        </div>
 
-<!-- Client Type -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-Client Type
-</label>
+                        <div>
+                            <h3 class="text-white text-xl font-bold">
+                                {{ $customer->name }}
+                            </h3>
 
-<select name="clientType"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                            <p class="text-blue-100 text-sm">
+                                Customer ID: #{{ $customer->id }}
+                            </p>
+                        </div>
 
-<option value="">Select Client Type</option>
+                    </div>
 
-<option value="Retail"
-{{ old('clientType',$customer->clientType)=='Retail'?'selected':'' }}>
-Retail
-</option>
+                </div>
 
-<option value="Wholesale"
-{{ old('clientType',$customer->clientType)=='Wholesale'?'selected':'' }}>
-Wholesale
-</option>
+                <!-- Form -->
+                <form action="{{ route('customers.update', $customer->id) }}"
+                      method="POST"
+                      class="p-8">
 
-<option value="VIP"
-{{ old('clientType',$customer->clientType)=='VIP'?'selected':'' }}>
-VIP
-</option>
+                    @csrf
+                    @method('PUT')
 
-</select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-@error('clientType')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                        <!-- Customer Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Customer Type
+                            </label>
 
-<!-- Customer Name -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-Customer Name
-</label>
+                            <select
+                                name="customer_type_id"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
 
-<input
-value="{{ old('name',$customer->name) }}"
-type="text"
-name="name"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                @foreach($customerTypes as $type)
 
-@error('name')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                                    <option
+                                        value="{{ $type->id }}"
+                                        {{ old('customer_type_id', $customer->customer_type_id) == $type->id ? 'selected' : '' }}>
 
-<!-- Phone -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-Phone Number
-</label>
+                                        {{ $type->name }} ({{ $type->discount_rate }}%)
 
-<input
-value="{{ old('phone',$customer->phone) }}"
-type="text"
-name="phone"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                                    </option>
 
-@error('phone')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                                @endforeach
 
-<!-- Email -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-Email
-</label>
+                            </select>
 
-<input
-value="{{ old('email',$customer->email) }}"
-type="email"
-name="email"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                            @error('customer_type_id')
+                                <p class="text-red-500 text-sm mt-1">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-@error('email')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Full Name
+                            </label>
 
-<!-- City -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-City
-</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value="{{ old('name', $customer->name) }}"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
 
-<input
-value="{{ old('city',$customer->city) }}"
-type="text"
-name="city"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                            @error('name')
+                                <p class="text-red-500 text-sm mt-1">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-@error('city')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Phone Number
+                            </label>
 
-<!-- Discount -->
-<div>
-<label class="block text-sm font-semibold mb-2">
-Discount (%)
-</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="{{ old('phone', $customer->phone) }}"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
 
-<input
-value="{{ old('discount',$customer->discount) }}"
-type="number"
-step="0.01"
-name="discount"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                            @error('phone')
+                                <p class="text-red-500 text-sm mt-1">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-@error('discount')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Email Address
+                            </label>
 
-</div>
+                            <input
+                                type="email"
+                                name="email"
+                                value="{{ old('email', $customer->email) }}"
+                                autocomplete="off"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
 
-<!-- Address -->
-<div class="mt-6">
-<label class="block text-sm font-semibold mb-2">
-Address
-</label>
+                            @error('email')
+                                <p class="text-red-500 text-sm mt-1">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-<textarea
-name="address"
-rows="3"
-class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">{{ old('address',$customer->address) }}</textarea>
+                    </div>
 
-@error('address')
-<p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-@enderror
-</div>
+                    <!-- Address -->
+                    <div class="mt-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Address
+                        </label>
 
-<!-- Buttons -->
-<div class="mt-8 flex justify-end gap-3">
+                        <textarea
+                            name="address"
+                            rows="3"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">{{ old('address', $customer->address) }}</textarea>
+                    </div>
 
-<a href="{{ route('customers.index') }}"
-class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow">
-Cancel
-</a>
+                    <!-- City -->
+                    <div class="mt-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            City
+                        </label>
 
-<button
-class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow font-medium">
-Update Customer
-</button>
+                        <input
+                            type="text"
+                            name="city"
+                            value="{{ old('city', $customer->city) }}"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
 
-</div>
+                    <!-- Customer Info -->
+                    <div class="mt-6 bg-gray-50 rounded-xl p-4 border">
+                        <div class="grid grid-cols-2 gap-4">
 
-</form>
+                            <div>
+                                <p class="text-sm text-gray-500">
+                                    Created Date
+                                </p>
 
-</div>
-</div>
+                                <p class="font-semibold">
+                                    {{ $customer->created_at->format('d M Y') }}
+                                </p>
+                            </div>
 
-</div>
-</div>
+                            <div>
+                                <p class="text-sm text-gray-500">
+                                    Current Discount
+                                </p>
 
+                                <p class="font-bold text-green-600 text-lg">
+                                    {{ $customer->customer_type->discount_rate ?? 0 }}%
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-3 mt-8">
+
+                        <a href="{{ route('customers.index') }}"
+                           class="px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
+
+                            ✏️ Update Customer
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 </x-app-layout>

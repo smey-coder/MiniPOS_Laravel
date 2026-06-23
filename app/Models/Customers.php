@@ -9,16 +9,17 @@ class Customers extends Model
     protected $table = 'customers';
 
     protected $fillable = [
-        'clientType',
+        'customer_type_id',
         'name',
         'phone',
         'email',
         'address',
         'city',
-        'discount'
     ];
-
-    protected $casts = [
-        'discount' => 'decimal:2'
-    ];
+    public $timestamps = true;
+    
+    public function customer_type()
+    {
+        return $this->belongsTo(Customer_Type::class, 'customer_type_id', 'id');
+    }
 }

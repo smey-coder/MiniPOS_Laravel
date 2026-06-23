@@ -58,7 +58,9 @@ class UserController extends Controller implements HasMiddleware
         ]);
 
         if($validator->fails()) {
-            return redirect()->route('users.create')->withInput()->withErrors($validator);
+            return redirect()->route('users.create')
+                ->withInput($request->except('password','confirm_password'))
+                ->withErrors($validator);
         }
         $user = new User();
         $user->name = $request->name;

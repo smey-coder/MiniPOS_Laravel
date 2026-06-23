@@ -130,7 +130,15 @@ $month = $khmerMonths[(int)$invoice->created_at->format('m')];
 $year = $invoice->created_at->format('Y');
 $time = $invoice->created_at->format('h:i A');
 
-$discount = $invoice->customer->discount ?? 0;
+/* ✅ FIXED RELATIONSHIP */
+$discount = $invoice->customer->customer_type->discount_rate ?? 0;
+
+/* subtotal */
+$subtotal = $invoice->details->sum('total');
+
+/* discount calculation */
+$discountAmount = ($subtotal * $discount) / 100;
+$grandTotal = $subtotal - $discountAmount;
 @endphp
 
 <div class="receipt">
@@ -153,7 +161,7 @@ $discount = $invoice->customer->discount ?? 0;
 
     <!-- Info -->
     <p><span class="bold">Invoice:</span> #{{ $invoice->id }}</p>
-    <p><span class="bold">ថ្ងៃ-ខែ-ឆ្នាំ:</span> {{ $dayName }}, {{ $day }} {{ $month }} {{ $year }} {{ $time }}</p>
+    <p><span class="bold">Date:</span> {{ $dayName }}, {{ $day }} {{ $month }} {{ $year }} {{ $time }}</p>
     <p><span class="bold">Cashier:</span> {{ auth()->user()->name }}</p>
     <p><span class="bold">Customer:</span> {{ $invoice->customer->name ?? 'Walk-in' }}</p>
     <p><span class="bold">Discount:</span> {{ $discount }}%</p>
@@ -163,11 +171,7 @@ $discount = $invoice->customer->discount ?? 0;
     <!-- Items -->
     <table>
         <tbody>
-        @php $grandTotal = 0; @endphp
-
         @foreach($invoice->details as $item)
-            @php $grandTotal += $item->total; @endphp
-
             <tr>
                 <td colspan="2" class="bold">{{ $item->product->name }}</td>
             </tr>
@@ -181,9 +185,19 @@ $discount = $invoice->customer->discount ?? 0;
 
     <div class="line"></div>
 
-    <!-- Total -->
+    <!-- TOTAL -->
     <div class="total-box">
         <table>
+            <tr>
+                <td>Subtotal</td>
+                <td class="right">${{ number_format($subtotal,2) }}</td>
+            </tr>
+
+            <tr>
+                <td>Discount ({{ $discount }}%)</td>
+                <td class="right">- ${{ number_format($discountAmount,2) }}</td>
+            </tr>
+
             <tr>
                 <td class="bold">TOTAL</td>
                 <td class="right bold">${{ number_format($grandTotal,2) }}</td>
@@ -192,14 +206,10 @@ $discount = $invoice->customer->discount ?? 0;
     </div>
 
     <!-- QR -->
-    <div class="center qr-box">
-        <img 
-            src="{{ asset('storage/qrcode/QrCode_Aceledajpg.jpg') }}" 
-            alt="QR Code Payment"
-            style="width:150px; height:150px; object-fit:contain;"
-        >
+    {{-- <div class="center qr-box">
+        {!! $qrCodeSvg ?? '' !!}
         <p style="font-size:0.75rem;">Scan to pay via ABA / ACLEDA</p>
-    </div>
+    </div> --}}
 
     <!-- Footer -->
     <div class="center">

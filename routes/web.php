@@ -8,13 +8,16 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CustomerControllers;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SaleControllers;
 use App\Http\Controllers\POSControllers;
 use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\QrcodeController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\PurchaseDetailController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -99,18 +102,25 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/products/{id}', [ProductController::class,'destroy'])->name('products.destroy');
 
     //Customers
-    Route::get('/customers', [CustomerControllers::class,'index'])->name('customers.index');
-    Route::get('/customers/create', [CustomerControllers::class, 'create'])->name('customers.create');
-    Route::post('/customers', [CustomerControllers::class,'store'])->name('customers.store');
-    Route::get('/customers/{id}/edit', [CustomerControllers::class,'edit'])->name('customers.edit');
-    Route::put('/customers/{id}', [CustomerControllers::class,'update'])->name('customers.update');
-    Route::delete('/customers/{id}', [CustomerControllers::class,'destroy'])->name('customers.destroy');
+    // Route::get('/customers', [CustomerController::class,'index'])->name('customers.index');
+    // Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
+    // Route::post('/customers', [CustomerController::class,'store'])->name('customers.store');
+    // Route::get('/customers/{id}/edit', [CustomerController::class,'edit'])->name('customers.edit');
+    // Route::put('/customers/{id}', [CustomerController::class,'update'])->name('customers.update');
+    // Route::delete('/customers/{id}', [CustomerController::class,'destroy'])->name('customers.destroy');
+
+    Route::resource('/customers', CustomerController::class);
 
     //Jobs
     Route::resource('/jobs', JobController::class);
 
     //Employees
     Route::resource('/employees', EmployeeController::class);
+
+    //Purchase
+    Route::resource('/purchases', PurchaseController::class);
+    //Purchase
+    Route::resource('/purchase_details', PurchaseDetailController::class);
 
     //Sales
     Route::get('/pos', [POSControllers::class, 'index'])->name('pos.index');

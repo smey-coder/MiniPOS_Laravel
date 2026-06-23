@@ -52,26 +52,6 @@ class="w-full border-gray-300 rounded-md shadow-sm">
 </div>
 
 
-<!-- Company -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Company</label>
-<input type="text"
-name="company"
-value="{{ old('company',$job->company) }}"
-class="w-full border-gray-300 rounded-md shadow-sm">
-</div>
-
-
-<!-- Location -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Location</label>
-<input type="text"
-name="location"
-value="{{ old('location',$job->location) }}"
-class="w-full border-gray-300 rounded-md shadow-sm">
-</div>
-
-
 <!-- Salary -->
 <div class="grid grid-cols-2 gap-4 mb-4">
 
@@ -126,39 +106,6 @@ rows="4"
 class="w-full border-gray-300 rounded-md shadow-sm">{{ old('description',$job->description) }}</textarea>
 
 </div>
-
-
-<!-- Deadline -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Deadline</label>
-
-<input type="date"
-name="deadline"
-value="{{ old('deadline',$job->deadline) }}"
-class="w-full border-gray-300 rounded-md shadow-sm">
-
-</div>
-
-
-<!-- Status -->
-<div class="mb-4">
-<label class="block text-gray-700 font-medium mb-2">Status</label>
-
-<select name="status"
-class="w-full border-gray-300 rounded-md shadow-sm">
-
-<option value="open" {{ $job->status=='open'?'selected':'' }}>
-Open
-</option>
-
-<option value="closed" {{ $job->status=='closed'?'selected':'' }}>
-Closed
-</option>
-
-</select>
-
-</div>
-
 
 <!-- Button -->
 <div class="mt-6">
