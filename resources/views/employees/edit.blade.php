@@ -1,14 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Edit Employee') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Edit Employee
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Update employee information
+                </p>
+            </div>
+
+            <a href="{{ route('employees.index') }}"
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow">
+                ← Back
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <x-message></x-message>
-
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
                 <form action="{{ route('employees.update', $employee->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf

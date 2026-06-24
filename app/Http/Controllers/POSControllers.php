@@ -56,6 +56,7 @@ class POSControllers extends Controller implements HasMiddleware
                     'message' => 'Current user is not linked to an employee record.'
                 ]);
             }
+
             $customer = Customers::with('customer_type')->findOrFail($request->customer_id);
             // Get discount from Customer Type
             $discountRate = $customer->customer_type->discount_rate ?? 0;

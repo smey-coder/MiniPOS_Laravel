@@ -4,16 +4,18 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Employees') }}
             </h2>
-            <a href="{{ route('employees.create') }}" class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-2 rounded-md">
-                Create Employee
+            @can('create employee')
+            <a href="{{ route('employees.create') }}"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow">
+                + Add Employee
             </a>
+            @endcan
         </div>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-message></x-message> {{-- Alert component --}}
-
             <div class="overflow-x-auto bg-white shadow-sm sm:rounded-lg">
                 <table class="w-full table-auto border-collapse border border-gray-200">
                     <thead class="bg-gray-50">
@@ -47,8 +49,9 @@
                                 {{ $employee->salary ? '$'.$employee->salary : '-' }}
                             </td>
                             <td class="px-6 py-3 text-center space-x-2">
-                                <a href="{{ route('employees.edit', $employee->id) }}" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-sm">Edit</a>
-                                <button onclick="deleteEmployee({{ $employee->id }})" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-sm">
+                                <a href="{{ route('employees.show', $employee->id) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded">View</a>
+                                <a href="{{ route('employees.edit', $employee->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded">Edit</a>
+                                <button onclick="deleteEmployee({{ $employee->id }})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded">
                                     Delete
                                 </button>
                             </td>
@@ -85,6 +88,15 @@
                         }
                     });
                 }
+            }
+            function openEmployeeModal() {
+                document.getElementById('employeeModal').classList.remove('hidden');
+                document.getElementById('employeeModal').classList.add('flex');
+            }
+
+            function closeEmployeeModal() {
+                document.getElementById('employeeModal').classList.add('hidden');
+                document.getElementById('employeeModal').classList.remove('flex');
             }
         </script>
     </x-slot>

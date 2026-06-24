@@ -13,13 +13,12 @@
             @endcan
         </div>
     </x-slot>
-
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <x-message></x-message>
 
-            <div class="bg-white rounded-xl shadow overflow-hidden border">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
@@ -130,7 +129,6 @@
 
         </div>
     </div>
-
     <x-slot name="script">
         <script type="text/javascript">
           function deleteProduct(id){

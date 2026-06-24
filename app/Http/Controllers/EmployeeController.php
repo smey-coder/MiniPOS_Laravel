@@ -28,7 +28,9 @@ class EmployeeController extends Controller implements HasMiddleware
     public function index()
     {
         $employees = Employees::orderBy('id', 'ASC')->paginate(10);
-        return view('employees.index', compact('employees'));
+        $jobs = Job::all();
+        $users = User::all();
+        return view('employees.index', compact('employees', 'jobs','users'));
     }
 
     /**
@@ -101,6 +103,24 @@ class EmployeeController extends Controller implements HasMiddleware
         $users = User::pluck('name', 'id');
 
         return view('employees.edit', compact('employee', 'jobs', 'users'));
+    }
+    /**
+     * Show customer details
+     */
+    public function show(string $id)
+    {
+        try {
+
+            $employee = Employees::with('job','user')->findOrFail($id);
+
+            return view('employees.show', compact('employee'));
+
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->route('employees.index')
+                ->with('error', 'Employee not found.');
+        }
     }
 
     /**
