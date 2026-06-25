@@ -17,7 +17,6 @@ class PurchaseDetailObserver
     {
         // Increase Stock
         $product = Products::find($purchaseDetail->product_id);
-
         if ($product) {
             $product->increment(
                 'quantity',
@@ -36,22 +35,12 @@ class PurchaseDetailObserver
      */
     public function updated(Purchase_Detail $purchaseDetail): void
     {
-        $product = Products::find(
-            $purchaseDetail->product_id
-        );
-
+        $product = Products::find($purchaseDetail->product_id);
         if ($product) {
-
-            $oldQty = $purchaseDetail->getOriginal(
-                'quantity'
-            );
-
+            $oldQty = $purchaseDetail->getOriginal('quantity');
             $newQty = $purchaseDetail->quantity;
-
             $difference = $newQty - $oldQty;
-
             if ($difference > 0) {
-
                 $product->increment(
                     'quantity',
                     $difference
@@ -66,11 +55,10 @@ class PurchaseDetailObserver
             }
         }
 
-        $oldSubtotal = $purchaseDetail->getOriginal('quantity') *
-            $purchaseDetail->getOriginal('unit_price');
+        $oldSubtotal = $purchaseDetail->getOriginal('quantity') *$purchaseDetail->getOriginal('unit_price');
 
         $newSubtotal = $purchaseDetail->quantity *
-            $purchaseDetail->unit_price;
+        $purchaseDetail->unit_price;
 
         $difference = $newSubtotal - $oldSubtotal;
 

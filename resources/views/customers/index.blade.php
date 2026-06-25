@@ -155,7 +155,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-500">
-                                    {{ $customer->created_at->format('d M Y') }}
+                                   {{ $customer->created_at ? $customer->created_at->format('d M Y') : '-' }}
                                 </td>
 
                                 <td class="px-6 py-4">

@@ -49,7 +49,7 @@ class POSControllers extends Controller implements HasMiddleware
                 'items' => 'required|array|min:1',
                 'customer_id' => 'required|exists:customers,id'
             ]);
-            $employee = Employees::where('user_id', auth()->id())->first();
+            $employee = Employees::where('user_id', auth()->id())->firstOrFail();
             if (!$employee) {
                 return response()->json([
                     'success' => false,

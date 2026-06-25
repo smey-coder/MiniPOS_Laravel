@@ -134,7 +134,7 @@
                                 Created Date
                             </p>
                             <p class="font-semibold">
-                                {{ $customer->created_at->format('d M Y') }}
+                                {{ $customer->created_at ? $customer->created_at->format('d M Y') : '-' }}
                             </p>
                         </div>
                         <div>

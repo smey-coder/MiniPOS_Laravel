@@ -25,14 +25,50 @@ class EmployeeController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employees::orderBy('id', 'ASC')->paginate(10);
-        $jobs = Job::all();
-        $users = User::all();
-        return view('employees.index', compact('employees', 'jobs','users'));
-    }
+        try {
 
+            $search = $request->search;
+
+            $employees = Employees::with(['job', 'user'])
+
+                ->when($search, function ($query) use ($search) {
+
+                    $query->where(function ($q) use ($search) {
+
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('position', 'like', "%{$search}%")
+
+                            ->orWhereHas('job', function ($job) use ($search) {
+                                $job->where('title', 'like', "%{$search}%");
+                            })
+
+                            ->orWhereHas('user', function ($user) use ($search) {
+                                $user->where('name', 'like', "%{$search}%");
+                            });
+
+                    });
+
+                })
+
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+            return view('employees.index', [
+                'employees' => $employees
+            ]);
+
+        } catch (\Exception $e) {
+
+            return back()->with(
+                'error',
+                'Failed to load employee. ' . $e->getMessage()
+            );
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */

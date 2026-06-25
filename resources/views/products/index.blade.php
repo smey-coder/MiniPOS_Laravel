@@ -99,6 +99,12 @@
 
                                     <td class="px-2 py-4 text-center">
                                         <div class="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-center">
+                                            @can('view products')
+                                            <a href="{{ route('products.show', $product->id)}}"
+                                               class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 sm:px-3 sm:py-2 rounded-md">
+                                                View
+                                            </a>
+                                            @endcan
                                             @can('edit products')
                                             <a href="{{ route('products.edit', $product->id)}}"
                                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 sm:px-3 sm:py-2 rounded-md">

@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\QrcodeController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\PurchaseDetailController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -100,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/{id}/edit', [ProductController::class,'edit'])->name('products.edit');
     Route::put('/products/{id}', [ProductController::class,'update'])->name('products.update');
     Route::delete('/products/{id}', [ProductController::class,'destroy'])->name('products.destroy');
+    Route::get('/products/{id}', [ProductController::class,'show'])->name('products.show');
 
     //Customers
     // Route::get('/customers', [CustomerController::class,'index'])->name('customers.index');
@@ -127,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout', [POSControllers::class, 'checkout'])->name('pos.checkout');
     Route::get('/invoice/{id}', [POSControllers::class, 'show'])->name('invoice.show');
     Route::get('/invoice/{id}/thermal', [POSControllers::class, 'thermal'])->name('invoice.thermal');
+
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->name('reports.index');
 
 });
 

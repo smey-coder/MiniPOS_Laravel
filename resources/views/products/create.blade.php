@@ -11,10 +11,14 @@
             </a>
         </div>
     </x-slot>
+    <div class="max-w-[1280px] mx-auto px-4">
 
+        <x-message />
+
+        {{-- Content Here --}}
+    </div>
     <div class="py-10">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-
             <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border">
 
                 <div class="p-8 text-gray-900 dark:text-gray-100">

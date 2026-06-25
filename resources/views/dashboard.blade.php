@@ -1,4 +1,55 @@
 <x-app-layout>
+    @if(auth()->user()->roles->isEmpty())
+
+<div class="max-w-[1280px] mx-auto mb-6 overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm mt-6">
+
+    <div class="p-6">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100">
+                <svg class="h-7 w-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.67 18h16.66a1 1 0 00.88-1.14l-7.5-13a1 1 0 00-1.74 0z"/>
+                </svg>
+            </div>
+
+            <div class="flex-1">
+
+                <h3 class="text-lg font-bold text-amber-900">
+                    Account Verification Required
+                </h3>
+
+                <p class="mt-2 text-amber-800 leading-relaxed">
+                    Welcome <strong>{{ auth()->user()->name }}</strong>!
+                    Your account has been created successfully, but it has not yet been assigned a system role.
+                    Access to system features is currently limited until an administrator reviews and approves your account.
+                </p>
+
+                <div class="mt-4 rounded-xl bg-white/70 p-4">
+                    <p class="text-sm text-gray-700">
+                        <strong>What happens next?</strong>
+                    </p>
+
+                    <ul class="mt-2 space-y-1 text-sm text-gray-600">
+                        <li>✓ Your account is waiting for administrator approval.</li>
+                        <li>✓ A role will be assigned to determine your permissions.</li>
+                        <li>✓ Once approved, all authorized features will become available automatically.</li>
+                    </ul>
+                </div>
+
+                <div class="mt-4 flex items-center gap-2 text-sm text-amber-700">
+                    <span>⏳</span>
+                    <span>Please contact the system administrator if you require immediate access.</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@endif
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200">
@@ -116,75 +167,70 @@
             @endcan
 
             <!-- Recent Orders -->
+            @can('view dashboards')
             <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-    
-    <h3 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">
-        All Orders
-    </h3>
-    <form method="GET" class="mb-4 flex flex-wrap gap-3 items-center">
+                <h3 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">
+                    All Orders
+                </h3>
+                <form method="GET" class="mb-4 flex flex-wrap gap-3 items-center">
+                    <!-- Search by customer -->
+                    <input type="text" name="search" placeholder="🔍 Search customer..."
+                        value="{{ request('search') }}"
+                        class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400">
 
-    <!-- Search by customer -->
-    <input type="text" name="search" placeholder="🔍 Search customer..."
-        value="{{ request('search') }}"
-        class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400">
+                    <!-- Filter by date -->
+                    <input type="date" name="date"
+                        value="{{ request('date') }}"
+                        class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400">
 
-    <!-- Filter by date -->
-    <input type="date" name="date"
-        value="{{ request('date') }}"
-        class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400">
+                    <!-- Button -->
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Filter
+                    </button>
+                </form>
+                <!-- Scroll Container -->
+                <div class="max-h-96 overflow-y-auto">
+                    <table class="w-full text-sm">
+                        <thead class="border-b text-gray-700 dark:text-gray-200 sticky top-0 bg-white dark:bg-gray-800">
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                            $orders = \App\Models\Invoices::with(['customer','details'])
+                                // 🔍 Search by customer name
+                                ->when(request('search'), function($q){
+                                    $q->whereHas('customer', function($c){
+                                        $c->where('name', 'like', '%' . request('search') . '%');
+                                    });
+                                })
+                                // 📅 Filter by date
+                                ->when(request('date'), function($q){
+                                    $q->whereDate('created_at', request('date'));
+                                })
 
-    <!-- Button -->
-    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        Filter
-    </button>
+                                ->latest()
+                                ->get();
+                            @endphp
 
-</form>
+                            @foreach($orders as $order)
+                            <tr class="border-b text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                <td>#{{ $order->id }}</td>
+                                <td>{{ $order->customer->name }}</td>
+                                <td class="text-green-600">${{ $order->details->sum('total') }}</td>
+                                <td>{{ $order->created_at->format('d M Y') }}</td>
+                            </tr>
+                            @endforeach
 
-<!-- Scroll Container -->
-<div class="max-h-96 overflow-y-auto">
-    <table class="w-full text-sm">
-        <thead class="border-b text-gray-700 dark:text-gray-200 sticky top-0 bg-white dark:bg-gray-800">
-            <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            @php
-            $orders = \App\Models\Invoices::with(['customer','details'])
-                // 🔍 Search by customer name
-                ->when(request('search'), function($q){
-                    $q->whereHas('customer', function($c){
-                        $c->where('name', 'like', '%' . request('search') . '%');
-                    });
-                })
-
-                // 📅 Filter by date
-                ->when(request('date'), function($q){
-                    $q->whereDate('created_at', request('date'));
-                })
-
-                ->latest()
-                ->get();
-            @endphp
-
-            @foreach($orders as $order)
-            <tr class="border-b text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                <td>#{{ $order->id }}</td>
-                <td>{{ $order->customer->name }}</td>
-                <td class="text-green-600">${{ $order->details->sum('total') }}</td>
-                <td>{{ $order->created_at->format('d M Y') }}</td>
-            </tr>
-            @endforeach
-
-        </tbody>
-    </table>
-</div>
-
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endcan
     <x-slot name="script">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
@@ -274,5 +320,4 @@
             }
         </script>
     </x-slot>
-
 </x-app-layout>

@@ -53,6 +53,14 @@ class CustomerController extends Controller
      */
     public function create()
     {
+        try{
+
+        }catch (\Exception $e){
+            return back()->with(
+                'error',
+                'Faild to create customers.' .$e->getMessage()
+            );
+        }
         $customerTypes = Customer_Type::orderBy('name')->get();
 
         return view('customers.create', compact('customerTypes'));
