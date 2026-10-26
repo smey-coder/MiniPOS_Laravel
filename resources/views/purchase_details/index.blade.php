@@ -17,7 +17,7 @@
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <x-message></x-message>
+            {{-- <x-message></x-message> --}}
 
             <!-- Statistics -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

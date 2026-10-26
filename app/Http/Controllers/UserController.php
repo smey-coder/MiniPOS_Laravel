@@ -114,27 +114,21 @@ class UserController extends Controller implements HasMiddleware
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save;
-
         $user->syncRoles($request->role);
-
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         $user = User::find($id);
-
         if($user == null){
             return response()->json([
                 'status' => false
             ]);
         }
-
         $user->delete();
-
         session()->flash('success', 'User Deleted successfully.');
         return response()->json([
             'status'=> true

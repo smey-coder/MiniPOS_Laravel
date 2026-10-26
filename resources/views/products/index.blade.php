@@ -15,17 +15,14 @@
     </x-slot>
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            <x-message></x-message>
-
+            {{-- <x-message></x-message> --}}
             <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                             <tr>
                                 <th class="px-2 sm:px-6 py-3">#</th>
-                                <th class="px-2 sm:px-6 py-3 hidden md:table-cell">Image</th>
+                                <th class="px-2 sm:px-6 py-3">Image</th>
                                 <th class="px-2 sm:px-6 py-3">Name</th>
                                 <th class="px-2 sm:px-6 py-3 hidden lg:table-cell">Barcode</th>
                                 <th class="px-2 sm:px-6 py-3 hidden xl:table-cell">Product Type</th>
@@ -38,7 +35,6 @@
                                 <th class="px-2 sm:px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
-
                         <tbody class="divide-y">
                         @if($products->isNotEmpty())
                             @foreach ($products as $product)
@@ -46,9 +42,8 @@
                                     <td class="px-2 sm:px-6 py-4 font-medium text-gray-700">
                                         {{$product->id}}
                                     </td>
-
                                     <!-- Product Image -->
-                                    <td class="px-2 sm:px-6 py-4 hidden md:table-cell">
+                                    <td class="px-2 sm:px-6 py-4">
                                         @if($product->image)
                                             <img src="{{ asset('storage/products/'.$product->image) }}" 
                                                  alt="Product Image" 
