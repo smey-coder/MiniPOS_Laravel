@@ -27,9 +27,11 @@ RUN apk add --no-cache \
         icu-dev \
         libzip-dev \
         postgresql-dev \
+        mariadb-connector-c-dev \
         libpng-dev \
         libjpeg-turbo-dev \
         freetype-dev \
+        $PHPIZE_DEPS \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j$(nproc) \
@@ -46,10 +48,6 @@ WORKDIR /app
 # Copy Composer dependencies and application source code
 COPY --from=vendor /app/vendor /app/vendor
 COPY . /app
-
-# Optimize Composer Autoloader
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer dump-autoload --optimize --no-dev && rm /usr/bin/composer
 
 # Storage Link & Permissions Setup
 RUN rm -rf /app/public/storage \
