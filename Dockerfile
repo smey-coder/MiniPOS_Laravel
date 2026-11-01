@@ -15,7 +15,21 @@ RUN composer install \
     --no-scripts
 
 # ==============================================================================
-# Stage 2: Fast Runtime Environment (Nginx + PHP-FPM)
+# Stage 2: Build Frontend Assets
+# ==============================================================================
+FROM node:22-alpine AS assets
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+
+# ==============================================================================
+# Stage 3: Fast Runtime Environment (Nginx + PHP-FPM)
 # ==============================================================================
 FROM php:8.4-fpm-alpine
 
@@ -48,6 +62,7 @@ WORKDIR /app
 # Copy Composer dependencies and application source code
 COPY --from=vendor /app/vendor /app/vendor
 COPY . /app
+COPY --from=assets /app/public/build /app/public/build
 
 # Storage Link & Permissions Setup
 RUN rm -rf /app/public/storage \
