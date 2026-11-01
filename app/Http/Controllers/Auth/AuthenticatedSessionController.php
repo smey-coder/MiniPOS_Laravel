@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-    return redirect()->to(route('dashboard'))->with(
+    return redirect()->away(rtrim(config('app.url'), '/') . '/dashboard')->with(
         'success',
         'Login successfully! Welcome back, ' . Auth::user()->name . '!'
     );

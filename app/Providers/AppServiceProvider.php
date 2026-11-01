@@ -8,6 +8,7 @@ use App\Models\Purchase_Detail;
 use App\Observers\PurchaseDetailObserver;
 use App\Observers\PurchaseObserver;
 use App\Models\Purchase;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        URL::forceRootUrl(config('app.url'));
+
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Check if Gate class exists
         if (class_exists(Gate::class)) {
             Gate::before(function ($user, $ability) {
