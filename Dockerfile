@@ -10,7 +10,36 @@ COPY resources ./resources
 RUN npm run build
 
 
-FROM composer:2 AS vendor
+FROM php:8.3-cli AS vendor
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    libcurl4-openssl-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+        curl \
+        dom \
+        fileinfo \
+        gd \
+        intl \
+        mbstring \
+        pdo_mysql \
+        xml \
+        xmlreader \
+        xmlwriter \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -37,16 +66,21 @@ FROM php:8.3-apache AS runtime
 WORKDIR /var/www/html
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    libcurl4-openssl-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
     libzip-dev \
     libicu-dev \
     libonig-dev \
+    libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
+        curl \
+        dom \
         exif \
+        fileinfo \
         gd \
         intl \
         mbstring \
@@ -54,6 +88,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pdo_mysql \
         pdo_pgsql \
         pgsql \
+        xml \
+        xmlreader \
+        xmlwriter \
         zip \
     && a2enmod rewrite headers \
     && apt-get clean \
