@@ -1,0 +1,14 @@
+.git
+.idea
+.vscode
+.env
+node_modules
+vendor
+storage/*.key
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+public/storage
+public/hot
