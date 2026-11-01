@@ -44,6 +44,9 @@ ENV APP_URL=https://pos-kh.onrender.com
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
 ENV QUEUE_CONNECTION=sync
+ENV SESSION_SECURE_COOKIE=true
+ENV SESSION_HTTP_ONLY=true
+ENV SESSION_SAME_SITE=lax
 
 # Install Nginx and PHP extensions
 RUN apk add --no-cache \
@@ -155,6 +158,14 @@ echo "Starting Laravel Production..."
 
 # Remove Vite development file
 rm -f /app/public/hot
+
+# Create writable Laravel runtime directories
+mkdir -p \
+    /app/storage/framework/cache \
+    /app/storage/framework/sessions \
+    /app/storage/framework/views \
+    /app/storage/logs \
+    /app/bootstrap/cache
 
 # Clear old Laravel caches
 php artisan optimize:clear
