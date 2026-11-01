@@ -40,6 +40,7 @@ RUN npm run build
 FROM php:8.4-fpm-alpine
 
 ENV PORT=10000
+ENV APP_URL=https://pos-kh.onrender.com
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
 ENV QUEUE_CONNECTION=sync
