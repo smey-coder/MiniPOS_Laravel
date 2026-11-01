@@ -22,7 +22,8 @@ FROM php:8.3-cli-bookworm AS vendor
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     git \
     unzip \
     libcurl4-openssl-dev \
@@ -34,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" \
+    && docker-php-ext-install -j2 \
         bcmath \
         curl \
         dom \
@@ -81,7 +82,8 @@ FROM php:8.3-apache-bookworm AS runtime
 
 WORKDIR /var/www/html
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -91,7 +93,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" \
+    && docker-php-ext-install -j2 \
         bcmath \
         curl \
         dom \
