@@ -40,6 +40,9 @@ RUN npm run build
 FROM php:8.4-fpm-alpine
 
 ENV PORT=10000
+ENV SESSION_DRIVER=file
+ENV CACHE_STORE=file
+ENV QUEUE_CONNECTION=sync
 
 # Install Nginx and PHP extensions
 RUN apk add --no-cache \
