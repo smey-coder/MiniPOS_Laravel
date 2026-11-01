@@ -63,6 +63,7 @@ WORKDIR /app
 COPY --from=vendor /app/vendor /app/vendor
 COPY . /app
 COPY --from=assets /app/public/build /app/public/build
+RUN rm -f /app/public/hot
 
 # Storage Link & Permissions Setup
 RUN rm -rf /app/public/storage \
@@ -89,6 +90,7 @@ EXPOSE 10000
 
 # Create Startup Script (Runs runtime caching safely after ENV vars are loaded)
 RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh \
+    && echo 'rm -f /app/public/hot' >> /app/docker-entrypoint.sh \
     && echo 'php artisan config:cache' >> /app/docker-entrypoint.sh \
     && echo 'php artisan route:cache' >> /app/docker-entrypoint.sh \
     && echo 'php artisan view:cache' >> /app/docker-entrypoint.sh \
