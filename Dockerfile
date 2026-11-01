@@ -1,57 +1,7 @@
-
-# ==========================================
-# Stage 1: Build Frontend Assets
-# ==========================================
-FROM node:22-alpine AS assets
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-
-RUN npm ci
-
-COPY . .
-
-RUN npm run build
-
-
-# ==========================================
-# Stage 2: Install Laravel Dependencies
-# ==========================================
-FROM php:8.3-cli-bookworm AS vendor
-
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    git \
-    unzip \
-    libcurl4-openssl-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    libicu-dev \
-    libonig-dev \
-    libzip-dev \
-    libxml2-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j2 \
-        bcmath \
-        curl \
-        dom \
-        exif \
-        gd \
-        intl \
-        mbstring \
-        pcntl \
-        pdo_mysql \
-        simplexml \
-        xml \
-        xmlreader \
-        xmlwriter \
-        zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# ==============================================================================
+# Stage 1: Build Dependencies
+# ==============================================================================
+FROM composer:2 AS vendor
 
 WORKDIR /app
 
@@ -60,100 +10,77 @@ COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
     --no-interaction \
-    --no-progress \
-    --no-scripts \
-    --no-autoloader \
-    --prefer-dist
+    --prefer-dist \
+    --ignore-platform-reqs \
+    --no-scripts
 
-COPY . .
+# ==============================================================================
+# Stage 2: Fast Runtime Environment (Nginx + PHP-FPM)
+# ==============================================================================
+FROM php:8.4-fpm-alpine
 
-RUN composer dump-autoload \
-    --no-dev \
-    --optimize \
-    --no-interaction \
-    --no-scripts \
-    --classmap-authoritative
+ENV PORT=10000
 
-
-# ==========================================
-# Stage 3: Laravel Production Runtime
-# ==========================================
-FROM php:8.3-apache-bookworm AS runtime
-
-WORKDIR /var/www/html
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    libcurl4-openssl-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    libicu-dev \
-    libonig-dev \
-    libzip-dev \
-    libxml2-dev \
+# Install Nginx, OPcache, and required PHP extensions
+RUN apk add --no-cache \
+        nginx \
+        icu-dev \
+        libzip-dev \
+        postgresql-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j2 \
-        bcmath \
-        curl \
-        dom \
-        exif \
-        gd \
-        intl \
-        mbstring \
-        pcntl \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_pgsql \
         pdo_mysql \
-        simplexml \
-        xml \
-        xmlreader \
-        xmlwriter \
         zip \
-    && a2enmod rewrite headers \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        intl \
+        bcmath \
+        opcache \
+        gd
 
+WORKDIR /app
 
-# Copy Laravel source code
-COPY . .
+# Copy Composer dependencies and application source code
+COPY --from=vendor /app/vendor /app/vendor
+COPY . /app
 
-# Copy Composer dependencies
-COPY --from=vendor /app/vendor ./vendor
+# Optimize Composer Autoloader
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN composer dump-autoload --optimize --no-dev && rm /usr/bin/composer
 
-# Copy compiled Vite assets
-COPY --from=assets /app/public/build ./public/build
+# Storage Link & Permissions Setup
+RUN rm -rf /app/public/storage \
+    && php artisan storage:link \
+    && chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/public \
+    && chmod -R 775 /app/storage /app/bootstrap/cache /app/public
 
+# Nginx Routing Configuration
+RUN echo 'server { \
+    listen 10000; \
+    root /app/public; \
+    index index.php; \
+    location / { \
+        try_files $uri $uri/ /index.php?$query_string; \
+    } \
+    location ~ \.php$ { \
+        fastcgi_pass 127.0.0.1:9000; \
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; \
+        include fastcgi_params; \
+    } \
+}' > /etc/nginx/http.d/default.conf
 
-# Configure Apache for Laravel public directory
-RUN sed -ri \
-    -e 's!DocumentRoot /var/www/html!DocumentRoot /var/www/html/public!g' \
-    /etc/apache2/sites-available/*.conf \
-    && printf '%s\n' \
-        '<Directory /var/www/html/public>' \
-        '    AllowOverride All' \
-        '    Options FollowSymLinks' \
-        '    Require all granted' \
-        '</Directory>' \
-        >> /etc/apache2/apache2.conf \
-    && mkdir -p \
-        storage/framework/cache/data \
-        storage/framework/sessions \
-        storage/framework/views \
-        storage/logs \
-        bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R ug+rwX storage bootstrap/cache
+EXPOSE 10000
 
+# Create Startup Script (Runs runtime caching safely after ENV vars are loaded)
+RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh \
+    && echo 'php artisan config:cache' >> /app/docker-entrypoint.sh \
+    && echo 'php artisan route:cache' >> /app/docker-entrypoint.sh \
+    && echo 'php artisan view:cache' >> /app/docker-entrypoint.sh \
+    && echo 'php-fpm -D' >> /app/docker-entrypoint.sh \
+    && echo 'exec nginx -g "daemon off;"' >> /app/docker-entrypoint.sh \
+    && chmod +x /app/docker-entrypoint.sh
 
-# Production Environment
-ENV APP_ENV=production
-ENV APP_DEBUG=false
-ENV LOG_CHANNEL=stderr
-
-EXPOSE 80
-
-# Start Laravel and Apache
-CMD php artisan package:discover --ansi \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && exec apache2-foreground
+CMD ["/app/docker-entrypoint.sh"]
