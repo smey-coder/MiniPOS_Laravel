@@ -13,6 +13,8 @@ RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
+    --ignore-platform-reqs \
+    --no-scripts \
     --optimize-autoloader
 
 # ==============================================================================
@@ -193,6 +195,7 @@ chmod -R 775 \
 
 # Clear Old Laravel Caches
 php artisan optimize:clear
+php artisan package:discover --ansi
 
 # Cache Configuration at Runtime
 php artisan config:cache
