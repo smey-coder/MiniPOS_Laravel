@@ -101,7 +101,7 @@ RUN rm -f /app/public/hot
 RUN rm -rf /app/public/storage \
     && php artisan storage:link \
     && mkdir -p \
-        /app/storage/framework/cache \
+        /app/storage/framework/cache/data \
         /app/storage/framework/sessions \
         /app/storage/framework/views \
         /app/storage/logs \
@@ -143,7 +143,8 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $document_root;
 
-        # Forward Render Proxy Headers
+        # Mandatory HTTPS and Proxy Forwarding Headers for Render
+        fastcgi_param HTTPS 'on';
         fastcgi_param HTTP_X_FORWARDED_FOR $http_x_forwarded_for;
         fastcgi_param HTTP_X_FORWARDED_HOST $http_x_forwarded_host;
         fastcgi_param HTTP_X_FORWARDED_PORT $http_x_forwarded_port;
@@ -176,16 +177,14 @@ fi
 # Remove Vite Development File
 rm -f /app/public/hot
 
-# Create Laravel Runtime Directories
+# Ensure runtime directories exist and belong to www-data
 mkdir -p \
-    /app/storage/framework/cache \
     /app/storage/framework/cache/data \
     /app/storage/framework/sessions \
     /app/storage/framework/views \
     /app/storage/logs \
     /app/bootstrap/cache
 
-# Ensure Storage Permissions
 chown -R www-data:www-data \
     /app/storage \
     /app/bootstrap/cache
@@ -197,12 +196,8 @@ chmod -R 775 \
 # Run database migrations first so session/cache tables exist
 php artisan migrate --force
 
-# Clear and rebuild caches properly for production
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-
+# Clear and rebuild caches safely for production
+php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
