@@ -12,7 +12,6 @@ RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
-    --ignore-platform-reqs \
     --no-scripts \
     --optimize-autoloader
 
@@ -30,7 +29,6 @@ RUN npm ci
 
 COPY . .
 
-# Build CSS and JavaScript for Production
 RUN npm run build
 
 
@@ -40,15 +38,27 @@ RUN npm run build
 FROM php:8.4-fpm-alpine
 
 ENV PORT=10000
+
+# Laravel Production
+ENV APP_ENV=production
+ENV APP_DEBUG=false
 ENV APP_URL=https://pos-kh.onrender.com
-ENV SESSION_DRIVER=cookie
-ENV CACHE_STORE=file
-ENV QUEUE_CONNECTION=sync
-ENV SESSION_SECURE_COOKIE=null
+
+# Session Configuration
+ENV SESSION_DRIVER=file
+ENV SESSION_LIFETIME=120
+ENV SESSION_ENCRYPT=false
+ENV SESSION_SECURE_COOKIE=true
 ENV SESSION_HTTP_ONLY=true
 ENV SESSION_SAME_SITE=lax
 
-# Install Nginx and PHP extensions
+# Cache and Queue
+ENV CACHE_STORE=file
+ENV QUEUE_CONNECTION=sync
+
+# ==============================================================================
+# Install Nginx and PHP Extensions
+# ==============================================================================
 RUN apk add --no-cache \
         nginx \
         icu-dev \
@@ -74,16 +84,16 @@ WORKDIR /app
 
 
 # ==============================================================================
-# Copy Application and Dependencies
+# Copy Laravel Application and Dependencies
 # ==============================================================================
 COPY --from=vendor /app/vendor /app/vendor
 
 COPY . /app
 
-# Copy production Vite assets
+# Copy Production Vite Assets
 COPY --from=assets /app/public/build /app/public/build
 
-# Remove Vite development hot file
+# Remove Vite Development Hot File
 RUN rm -f /app/public/hot
 
 
@@ -92,6 +102,12 @@ RUN rm -f /app/public/hot
 # ==============================================================================
 RUN rm -rf /app/public/storage \
     && php artisan storage:link \
+    && mkdir -p \
+        /app/storage/framework/cache \
+        /app/storage/framework/sessions \
+        /app/storage/framework/views \
+        /app/storage/logs \
+        /app/bootstrap/cache \
     && chown -R www-data:www-data \
         /app/storage \
         /app/bootstrap/cache \
@@ -122,15 +138,15 @@ server {
     location ~ \.php$ {
         try_files $uri =404;
 
+        include fastcgi_params;
+
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
-
-        include fastcgi_params;
 
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $document_root;
 
-        # Forward Render HTTPS information to Laravel
+        # Forward Render Proxy Headers
         fastcgi_param HTTP_X_FORWARDED_FOR $http_x_forwarded_for;
         fastcgi_param HTTP_X_FORWARDED_HOST $http_x_forwarded_host;
         fastcgi_param HTTP_X_FORWARDED_PORT $http_x_forwarded_port;
@@ -145,7 +161,7 @@ EOF
 
 
 # ==============================================================================
-# Startup Script
+# Laravel Startup Script
 # ==============================================================================
 RUN cat > /app/docker-entrypoint.sh <<'EOF'
 #!/bin/sh
@@ -156,10 +172,10 @@ cd /app
 
 echo "Starting Laravel Production..."
 
-# Remove Vite development file
+# Remove Vite Development File
 rm -f /app/public/hot
 
-# Create writable Laravel runtime directories
+# Create Laravel Runtime Directories
 mkdir -p \
     /app/storage/framework/cache \
     /app/storage/framework/sessions \
@@ -167,23 +183,29 @@ mkdir -p \
     /app/storage/logs \
     /app/bootstrap/cache
 
-# Clear old Laravel caches
-php artisan optimize:clear
-
-# Generate production caches using runtime environment variables
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Set runtime permissions
+# Ensure Storage Permissions
 chown -R www-data:www-data \
     /app/storage \
     /app/bootstrap/cache
 
+chmod -R 775 \
+    /app/storage \
+    /app/bootstrap/cache
+
+# Clear Old Laravel Caches
+php artisan optimize:clear
+
+# Cache Configuration at Runtime
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+echo "Laravel configuration completed."
+
 # Start PHP-FPM
 php-fpm -D
 
-# Start Nginx in foreground
+# Start Nginx
 exec nginx -g "daemon off;"
 EOF
 
