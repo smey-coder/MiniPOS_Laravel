@@ -12,9 +12,7 @@ RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
-    --no-scripts \
     --optimize-autoloader
-
 
 # ==============================================================================
 # Stage 2: Build Frontend Assets (Vite + Tailwind CSS)
