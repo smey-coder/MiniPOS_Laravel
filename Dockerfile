@@ -46,7 +46,7 @@ ENV APP_DEBUG=false
 ENV APP_URL=https://pos-kh.onrender.com
 
 # Session Configuration
-ENV SESSION_DRIVER=file
+ENV SESSION_DRIVER=cookie
 ENV SESSION_LIFETIME=120
 ENV SESSION_ENCRYPT=false
 ENV SESSION_SECURE_COOKIE=true
