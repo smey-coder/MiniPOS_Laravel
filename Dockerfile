@@ -179,6 +179,7 @@ rm -f /app/public/hot
 # Create Laravel Runtime Directories
 mkdir -p \
     /app/storage/framework/cache \
+    /app/storage/framework/cache/data \
     /app/storage/framework/sessions \
     /app/storage/framework/views \
     /app/storage/logs \
