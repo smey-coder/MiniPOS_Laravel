@@ -49,7 +49,7 @@ ENV APP_URL=https://pos-kh.onrender.com
 ENV SESSION_DRIVER=file
 ENV SESSION_LIFETIME=120
 ENV SESSION_ENCRYPT=false
-ENV SESSION_SECURE_COOKIE=true
+ENV SESSION_SECURE_COOKIE=false
 ENV SESSION_HTTP_ONLY=true
 ENV SESSION_SAME_SITE=lax
 
@@ -192,6 +192,11 @@ chown -R www-data:www-data \
 chmod -R 775 \
     /app/storage \
     /app/bootstrap/cache
+
+# Re-create and fix session files after cache clearing.
+mkdir -p /app/storage/framework/sessions
+chown -R www-data:www-data /app/storage/framework/sessions
+chmod -R 775 /app/storage/framework/sessions
 
 # Clear Old Laravel Caches
 php artisan optimize:clear
